@@ -1,0 +1,35 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import '../styles/fonts.css';
+import '../styles/global.css';
+import '../styles/refinement.css';
+import SiteFooter from '../components/SiteFooter.astro';
+import { publicCatalog } from '../server/database';
+import '../styles/working.css';
+import type { CatalogSnapshot } from '../lib/catalog-types';
+interface Props { title?: string; description?: string; catalog?: CatalogSnapshot; }
+const {
+  catalog = publicCatalog(),
+  title = 'Референс цветочного — букеты с доставкой в Перми',
+  description = 'Демонстрационный сайт цветочной мастерской: букеты, подарочные сочетания и удобное оформление заказа.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#F6F5F0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Перейти к содержимому</a>
+    <SiteHeader catalog={catalog} />
+    <main id="main"><slot /></main>
+    <SiteFooter catalog={catalog} />
+    <script>import '../scripts/motion';</script>
+  </body>
+</html>

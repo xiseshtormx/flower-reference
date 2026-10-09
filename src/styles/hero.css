@@ -1,0 +1,71 @@
+/* A quieter first screen. These rules override only the hero. */
+.hero.hero--quiet {
+  grid-template-columns: minmax(0, .42fr) minmax(0, .58fr);
+  align-items: center;
+  gap: clamp(32px, 4vw, 64px);
+  padding-block: 38px 8px;
+}
+.hero--quiet .hero-copy { padding: 0 0 12px; }
+.hero--quiet h1 {
+  font-size: clamp(48px, 5.3vw, 78px);
+  font-weight: 400;
+  line-height: 1.07;
+  letter-spacing: -.045em;
+}
+.hero--quiet .hero-description {
+  margin-top: 25px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.hero--quiet .hero-actions { margin-top: 30px; }
+.hero--quiet .hero-actions .button {
+  min-height: 50px;
+  padding: 14px 22px;
+  gap: 28px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.hero--quiet .hero-photo { height: clamp(400px, 39vw, 560px); }
+.hero--quiet .hero-product-caption {
+  padding-top: 15px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.hero--quiet .hero-product-name { min-width: 0; }
+.hero--quiet .hero-product-size { color: var(--muted); }
+.hero--quiet .hero-product-price {
+  font-size: 13px;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+.hero--quiet .hero-product-caption:hover .hero-product-name {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 950px) {
+  .hero.hero--quiet { gap: 28px; padding-top: 28px; }
+  .hero--quiet h1 { font-size: clamp(43px, 5.4vw, 55px); }
+  .hero--quiet .hero-description { font-size: 12px; margin-top: 20px; }
+  .hero--quiet .hero-actions { margin-top: 25px; }
+  .hero--quiet .hero-photo { height: 400px; }
+}
+@media (max-width: 740px) {
+  .hero.hero--quiet {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    padding-block: 27px 0;
+  }
+  .hero--quiet .hero-copy { padding: 0; }
+  .hero--quiet h1 {
+    font-size: clamp(43px, 10.6vw, 64px);
+    line-height: 1.08;
+  }
+  .hero--quiet .hero-description { font-size: 12px; margin-top: 15px; }
+  .hero--quiet .hero-actions { margin-top: 20px; }
+  .hero--quiet .hero-photo { height: auto; aspect-ratio: 1.35; }
+  .hero--quiet .hero-product-caption { padding-top: 12px; font-size: 12px; }
+  .hero--quiet .hero-product-price { font-size: 12px; }
+  .hero--quiet .hero-visual { min-width: 0; }
+}

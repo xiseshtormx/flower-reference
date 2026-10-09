@@ -1,0 +1,82 @@
+---
+import { formatPrice } from '../data/products';
+import type { CatalogSnapshot } from '../lib/catalog-types';
+import HeroBotanical from './HeroBotanical.astro';
+const { catalog } = Astro.props as { catalog: CatalogSnapshot };
+const bouquet = catalog.products.find(product => product.id === catalog.settings.heroProductId) ?? catalog.products[0];
+---
+<section class:list={["flower-hero container", { "flower-hero--empty": !bouquet }]} data-flower-hero aria-labelledby="hero-title">
+  <div class="flower-hero-copy">
+    <p class="flower-hero-eyebrow" data-hero-eyebrow><span class="status-dot" aria-hidden="true"></span>Цветочная мастерская · Пермь</p>
+    <h1 id="hero-title">
+      <span class="flower-title-line"><span data-hero-line>Букеты</span></span>
+      <span class="flower-title-line flower-title-accent"><span data-hero-line>в Перми</span></span>
+    </h1>
+    <p class="flower-hero-description" data-hero-detail>Для близких. Для дома. Просто так.<br />Выберите цветы, а затем — удобную дату.</p>
+    <div class="flower-hero-actions" data-hero-detail><a class="flower-hero-action" href="#catalog">Выбрать букет</a><a class="underlined-link flower-hero-secondary" href="#individual">Свои пожелания</a></div>
+    <div class="flower-hero-palettes" data-hero-detail>
+      <p>Какие оттенки вам ближе?</p>
+      <div><a href="/?tone=Светлые#catalog"><span class="palette-dot palette-light" aria-hidden="true"></span>Светлые</a><a href="/?tone=Розовые#catalog"><span class="palette-dot palette-pink" aria-hidden="true"></span>Розовые</a><a href="/?tone=Яркие#catalog"><span class="palette-dot palette-bright" aria-hidden="true"></span>Яркие</a></div>
+    </div>
+    <HeroBotanical />
+  </div>
+  {bouquet && <div class="flower-hero-stage">
+    <span class="flower-hero-frame" data-hero-frame aria-hidden="true"></span>
+    <a data-hero-photo class="flower-hero-photo" href={'/bouquet/' + bouquet.id + '/'} aria-label={'Посмотреть букет «' + bouquet.name + '»'}>
+      <div class="flower-photo-drift" data-hero-drift><div class="flower-photo-entry" data-hero-photo-entry><div class="flower-photo-hover"><img src={bouquet.image} alt={bouquet.name} width="1100" height="1650" fetchpriority="high" decoding="async" style={'object-position:' + bouquet.imagePosition} /></div></div></div>
+    </a>
+    <div class="flower-hero-caption" data-hero-detail><a class="flower-hero-product" href={'/bouquet/' + bouquet.id + '/'}>{bouquet.name}<small>На фото — размер {bouquet.photoSize}</small></a><div class="flower-hero-caption-end"><span class="flower-hero-price">{formatPrice(bouquet.prices[bouquet.photoSize])}</span><a class="flower-hero-details" href={'/bouquet/' + bouquet.id + '/'}>Подробнее</a></div></div>
+  </div>}
+</section>
+
+<script>
+  import '../scripts/hero-motion';
+</script>
+
+<style is:inline>
+  .flower-hero { box-sizing:border-box;width:calc(100% - 96px);max-width:1360px;margin-inline:auto;font-family:'Manrope',Arial,sans-serif;color:#242a22;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(36px,6vw,92px);padding-block:44px 28px; }
+  .flower-hero--empty { grid-template-columns:1fr; }
+  .flower-hero *,.flower-hero *::before,.flower-hero *::after { box-sizing:border-box; }
+  .flower-hero-copy { position:relative;min-width:0;padding-block:14px 20px; }
+  .flower-hero-eyebrow { display:flex;align-items:center;gap:9px;margin:0 0 29px;font-size:11px;color:var(--muted,#697064); }
+  .flower-hero h1 { margin:0;font-family:'Flower Prata',Georgia,serif;font-weight:400;font-size:clamp(62px,6.6vw,96px);line-height:1.13;letter-spacing:-.04em; }
+  .flower-title-line { display:block;overflow:hidden;padding-block:.05em; }
+  .flower-title-line + .flower-title-line { margin-top:-.09em; }
+  .flower-title-line>span { display:block; }
+  .flower-title-accent { color:var(--leaf,#46553e); }
+  .flower-hero-description { max-width:370px;margin:26px 0 0;font-size:14px;line-height:1.85;color:var(--muted,#697064); }
+  .flower-hero-actions { display:flex;align-items:center;gap:27px;flex-wrap:wrap;margin-top:28px; }
+  .flower-hero-action { display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:15px 29px;background:var(--leaf,#46553e);color:white;text-decoration:none;font-size:13px;font-weight:600;border-radius:4px;transition:background-color 180ms,box-shadow 180ms,transform 180ms; }
+  .flower-hero-action:hover { background:var(--leaf-dark,#34422f);box-shadow:0 5px 14px #34422f16;transform:translateY(-1px); }
+  .flower-hero-secondary { font-size:12px; }
+  .flower-hero-palettes { margin-top:45px;max-width:350px; }
+  .flower-hero-palettes>p { font-size:11px;color:var(--muted,#697064);margin-bottom:12px; }
+  .flower-hero-palettes>div { display:flex;flex-wrap:wrap;gap:9px; }
+  .flower-hero-palettes a { display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:8px 11px;font-size:11px;text-decoration:none;border:1px solid var(--line,#dcded5);border-radius:30px;background:var(--paper,#f6f5f0);transition:border-color 180ms,background 180ms; }
+  .flower-hero-palettes a:hover { border-color:var(--leaf,#46553e);background:#ecefe7; }
+  .palette-dot { width:14px;height:14px;border-radius:50%;border:1px solid #242a2210;flex-shrink:0; }
+  .palette-light { background:linear-gradient(135deg,#f6eee1 50%,#a4ad8a 50%); }
+  .palette-pink { background:linear-gradient(135deg,#d4a6bb 50%,#9c83a6 50%); }
+  .palette-bright { background:linear-gradient(135deg,#a64a54 50%,#cd8a59 50%); }
+  .hero-botanical { position:absolute;right:-20px;bottom:4px;width:100px;height:148px;color:#8d7689;opacity:.52;pointer-events:none;transform:rotate(11deg);z-index:0; }
+  .hero-flower-sway { transform-box:view-box;transform-origin:50% 100%; }
+  .flower-hero-stage { position:relative;isolation:isolate;min-width:0;width:100%;max-width:540px;justify-self:end; }
+  .flower-hero-frame { pointer-events:none;position:absolute;inset:20px -14px 76px 25px;border:1px solid #dfd7dd;border-radius:4px 80px 4px 4px;z-index:-1;transform:translate3d(0,var(--flower-frame-drift,0px),0); }
+  .flower-hero-photo { display:block;position:relative;height:clamp(430px,41vw,575px);overflow:hidden;background:#ece3dc;border-radius:4px 80px 4px 4px; }
+  .flower-photo-drift,.flower-photo-entry,.flower-photo-hover { width:100%;height:100%; }
+  .flower-photo-drift { transform:translate3d(0,var(--flower-drift,0px),0) scale(1.065); }
+  .flower-photo-hover { transition:transform 650ms cubic-bezier(.2,.7,.3,1); }
+  .flower-hero-photo img { display:block;width:100%;height:100%;object-fit:cover; }
+  .flower-hero-caption { display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:19px;min-height:75px;font-size:13px;line-height:1.5; }
+  .flower-hero-product { color:inherit;text-decoration:none; }
+  .flower-hero-product:hover { text-decoration:underline;text-underline-offset:4px; }
+  .flower-hero-product small { display:block;margin-top:4px;font-size:11px;color:var(--muted,#697064); }
+  .flower-hero-caption-end { display:flex;flex-direction:column;align-items:flex-end;gap:4px; }
+  .flower-hero-price { white-space:nowrap;font-size:15px;font-weight:600; }
+  .flower-hero-details { color:var(--muted,#697064);font-size:11px;text-decoration:underline;text-underline-offset:4px; }
+  @media(hover:hover) and (pointer:fine) { .flower-hero-photo:hover .flower-photo-hover { transform:scale(1.025); } }
+  @media(max-width:1150px) { .flower-hero { width:calc(100% - 64px);gap:40px; }.flower-hero h1 { font-size:clamp(58px,6.4vw,74px); }.hero-botanical { width:78px;right:-22px;bottom:7px;opacity:.32; }.flower-hero-actions { gap:20px; } }
+  @media(max-width:950px) { .flower-hero { gap:28px;padding-block:30px 18px; }.flower-hero h1 { font-size:clamp(50px,6.7vw,64px); }.flower-hero-eyebrow { margin-bottom:22px;font-size:10px; }.flower-hero-description { font-size:13px;margin-top:20px; }.flower-hero-action { padding-inline:22px; }.flower-hero-secondary { font-size:11px; }.flower-hero-palettes { margin-top:28px; }.flower-hero-palettes a { padding-inline:9px;font-size:10px; }.flower-hero-photo { height:470px; }.flower-photo-drift { transform:none; }.hero-botanical { display:none; }.flower-hero-caption { font-size:12px; } }
+  @media(max-width:740px) { .flower-hero { width:calc(100% - 36px);grid-template-columns:1fr;gap:28px;padding-block:26px 6px; }.flower-hero-copy { padding:0; }.flower-hero h1 { font-size:clamp(50px,12vw,72px); }.flower-hero-eyebrow { margin-bottom:19px; }.flower-hero-description { margin-top:18px;max-width:none; }.flower-hero-actions { margin-top:23px;gap:24px; }.flower-hero-palettes { max-width:none;margin-top:25px; }.flower-hero-palettes a { font-size:11px;padding-inline:12px; }.flower-hero-stage { max-width:none; }.flower-hero-photo { height:clamp(340px,92vw,470px);border-top-right-radius:60px; }.flower-hero-frame { inset:16px -7px 74px 18px;border-top-right-radius:60px; }.flower-hero-caption { font-size:12px;padding-top:17px; }.flower-hero-price { font-size:14px; } }
+  @media(prefers-reduced-motion:reduce) { .flower-photo-drift,.flower-photo-entry,.flower-photo-hover,.flower-hero-frame,.hero-flower-sway,.flower-hero-action { transform:none!important;transition:none!important; } }
+</style>

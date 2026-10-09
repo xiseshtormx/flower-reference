@@ -1,0 +1,206 @@
+---
+import FooterGarden from './FooterGarden.astro';
+import type { CatalogSnapshot } from '../lib/catalog-types';
+const { catalog } = Astro.props as { catalog: CatalogSnapshot };
+---
+<footer class="site-footer site-footer--garden" aria-label="Информация и навигация по сайту">
+  <div class="container">
+    <div class="garden-footer-main">
+      <div class="garden-footer-intro">
+        <p class="garden-footer-kicker">Цветочная мастерская · Пермь</p>
+        <p class="garden-footer-title">Цветы рядом</p>
+        <a class="garden-footer-catalog" href="/#catalog">Выбрать букет</a>
+      </div>
+      <nav class="garden-footer-links garden-footer-selection" aria-label="Выбрать цветы">
+        <p class="garden-footer-label">Выбрать</p>
+        <a href="/#catalog">Все букеты</a>
+        <a href="/#gifts">Ваза и открытка</a>
+        <a href="/#individual">Свои пожелания</a>
+      </nav>
+      <nav class="garden-footer-links garden-footer-information" aria-label="Узнать о заказе">
+        <p class="garden-footer-label">Узнать</p>
+        <a href="/#delivery">Доставка и самовывоз</a>
+        <a href="/#faq">Ответы на вопросы</a>
+        <a href="/cart/">Корзина</a>
+        <a href="/privacy/">О данных заявки</a>
+        {catalog.settings.contactPhone && <a href={"tel:" + catalog.settings.contactPhone}>{catalog.settings.contactPhone}</a>}
+        {catalog.settings.contactTelegram && <a href={"https://t.me/" + catalog.settings.contactTelegram}>Telegram мастерской</a>}
+      </nav>
+      <div class="garden-footer-drawing" aria-hidden="true"><FooterGarden /></div>
+    </div>
+    <div class="garden-footer-bottom">
+      <span>Референс цветочного · 2026</span>
+      <p>{catalog.settings.demoMode ? "Учебный проект. Заявки сохраняются для проверки." : "Каждый заказ подтверждает флорист."}</p>
+      <a class="garden-footer-top" href="#main">Наверх</a>
+    </div>
+  </div>
+</footer>
+
+<style is:inline>
+/* A small herbarium, separate from the navigation. No text is laid over the drawing. */
+.site-footer.site-footer--garden {
+  --garden-ink:#f1f1e8;
+  --garden-muted:#c4ccbc;
+  --garden-line:#64745a;
+  background:#303d2e;
+  color:var(--garden-ink);
+  padding:44px 0 19px;
+}
+.site-footer--garden .garden-footer-main {
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(250px,1.35fr) minmax(145px,.75fr) minmax(180px,.9fr) minmax(180px,1fr);
+  grid-template-areas:'intro selection information drawing';
+  align-items:start;
+  gap:30px;
+  padding-bottom:32px;
+}
+.site-footer--garden .garden-footer-intro { grid-area:intro;min-width:0;padding-top:4px; }
+.site-footer--garden .garden-footer-kicker {
+  color:var(--garden-muted);
+  font-size:11px;
+  line-height:1.7;
+  letter-spacing:.025em;
+}
+.site-footer--garden .garden-footer-title {
+  margin-top:15px;
+  font-family:var(--serif,'Flower Prata',Georgia,serif);
+  font-size:clamp(33px,3.1vw,44px);
+  font-weight:400;
+  line-height:1.3;
+  letter-spacing:-.035em;
+}
+.site-footer--garden .garden-footer-catalog {
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  min-height:44px;
+  margin-top:22px;
+  padding:10px 18px;
+  font-size:12px;
+  line-height:1.5;
+  color:var(--garden-ink);
+  background:#ffffff08;
+  border:1px solid #9daa91;
+  border-radius:4px;
+  transition:background-color 180ms,border-color 180ms;
+}
+.site-footer--garden .garden-footer-catalog:hover {
+  background:#ffffff12;
+  border-color:var(--garden-ink);
+}
+.site-footer--garden .garden-footer-selection { grid-area:selection; }
+.site-footer--garden .garden-footer-information { grid-area:information; }
+.site-footer--garden .garden-footer-links { display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding-top:8px; }
+.site-footer--garden .garden-footer-label {
+  color:var(--garden-muted);
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:.08em;
+  margin-bottom:16px;
+}
+.site-footer--garden .garden-footer-links>a {
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding-block:5px;
+  font-size:12px;
+  line-height:1.8;
+  text-decoration:underline;
+  text-decoration-color:transparent;
+  text-decoration-thickness:1px;
+  text-underline-offset:5px;
+  transition:text-decoration-color 180ms,color 180ms;
+}
+.site-footer--garden .garden-footer-links>a:hover { text-decoration-color:#aabb9c;color:white; }
+.site-footer--garden .garden-footer-drawing {
+  grid-area:drawing;
+  align-self:end;
+  width:100%;
+  max-width:280px;
+  justify-self:end;
+  color:#c0ceb0;
+  opacity:.7;
+  pointer-events:none;
+}
+.site-footer--garden .garden-footer-art { display:block;width:100%;height:auto;overflow:visible; }
+.site-footer--garden .garden-petal { stroke:#c9a9c2; }
+.site-footer--garden .garden-sprig { opacity:.65; }
+.site-footer--garden .garden-ground { opacity:.36; }
+.site-footer--garden .garden-footer-bottom {
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:18px 30px;
+  padding-top:13px;
+  border-top:1px solid #64745a80;
+  color:var(--garden-muted);
+  font-size:10px;
+  line-height:1.8;
+}
+.site-footer--garden .garden-footer-bottom>p { justify-self:center; }
+.site-footer--garden .garden-footer-top {
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  min-height:36px;
+  text-decoration:underline;
+  text-underline-offset:5px;
+  text-decoration-color:#8b9b7d;
+}
+.site-footer--garden a:focus-visible { outline-color:#e2e9d8; }
+@media(max-width:1150px) {
+  .site-footer--garden .garden-footer-main {
+    grid-template-columns:minmax(205px,1.1fr) minmax(135px,.8fr) minmax(165px,.95fr) minmax(140px,.8fr);
+    gap:24px;
+  }
+  .site-footer--garden .garden-footer-title { font-size:36px; }
+}
+@media(max-width:950px) {
+  .site-footer--garden .garden-footer-main {
+    grid-template-columns:minmax(205px,1.1fr) minmax(135px,.8fr) minmax(175px,1fr);
+    grid-template-areas:'intro selection information';
+    gap:28px;
+  }
+  .site-footer--garden .garden-footer-intro { padding-bottom:90px; }
+  .site-footer--garden .garden-footer-drawing { position:absolute;left:-10px;bottom:25px;width:150px; }
+  .site-footer--garden .garden-footer-title { font-size:34px; }
+  .site-footer--garden .garden-footer-bottom { grid-template-columns:1fr auto;gap:3px 20px; }
+  .site-footer--garden .garden-footer-bottom>p { grid-row:2;grid-column:1;justify-self:start; }
+  .site-footer--garden .garden-footer-top { grid-column:2;grid-row:1/3; }
+}
+@media(max-width:740px) {
+  .site-footer.site-footer--garden { padding-top:31px; }
+  .site-footer--garden .garden-footer-main {
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:'intro intro' 'selection information';
+    gap:31px 24px;
+    padding-bottom:25px;
+  }
+  .site-footer--garden .garden-footer-intro { padding:0 120px 0 0;min-height:143px; }
+  .site-footer--garden .garden-footer-kicker { font-size:10px;max-width:220px; }
+  .site-footer--garden .garden-footer-title { font-size:33px;margin-top:13px; }
+  .site-footer--garden .garden-footer-catalog { margin-top:18px; }
+  .site-footer--garden .garden-footer-drawing { left:auto;bottom:auto;right:-11px;top:7px;width:120px; }
+  .site-footer--garden .garden-footer-art { width:100%;height:145px;overflow:hidden; }
+  .site-footer--garden .garden-sprig { display:none; }
+  .site-footer--garden .garden-footer-links { padding-top:0; }
+  .site-footer--garden .garden-footer-label { margin-bottom:10px; }
+  .site-footer--garden .garden-footer-links>a { min-height:42px;font-size:12px;line-height:1.7; }
+  .site-footer--garden .garden-footer-bottom { padding-top:15px;gap:5px 18px; }
+  .site-footer--garden .garden-footer-bottom>p { max-width:280px; }
+  .site-footer--garden .garden-footer-top { min-height:44px; }
+}
+@media(max-width:430px) {
+  .site-footer--garden .garden-footer-main { column-gap:20px; }
+  .site-footer--garden .garden-footer-intro { padding-right:92px; }
+  .site-footer--garden .garden-footer-title { font-size:30px; }
+  .site-footer--garden .garden-footer-drawing { width:95px;right:-5px;top:8px; }
+  .site-footer--garden .garden-footer-art { height:137px; }
+  .site-footer--garden .garden-footer-bottom { gap:6px 12px;font-size:10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .site-footer--garden a { transition:none; }
+  .site-footer--garden .garden-footer-art path { stroke-dasharray:none!important;stroke-dashoffset:0!important; }
+}
+</style>

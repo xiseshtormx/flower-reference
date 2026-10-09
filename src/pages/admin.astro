@@ -1,0 +1,8 @@
+---
+import AdminApp from '../components/admin/AdminApp';
+import { loggedIn } from '../server/auth';
+import '../styles/fonts.css';
+import '../styles/admin.css';
+const authenticated = loggedIn(Astro);
+---
+<!doctype html><html lang="ru"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="robots" content="noindex,nofollow" /><meta name="theme-color" content="#f6f5f0" /><title>Панель управления — Цветочная мастерская</title><link rel="icon" type="image/svg+xml" href="/favicon.svg" /></head><body class="admin-body"><AdminApp authenticated={authenticated} client:load /></body></html>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { publicCatalog } from '../server/database';
+const catalog = publicCatalog();
+---
+<BaseLayout title="О данных заявки — Референс цветочного" catalog={catalog}>
+  <article class="container privacy-page">
+    <a class="underlined-link" href="/">Вернуться на сайт</a>
+    <h1>О данных заявки</h1>
+    {catalog.settings.demoMode && <p>Сейчас это учебный проект. Для проверки форм используйте тестовые имена, телефоны и адреса. Отправка сохраняет тестовую заявку в панели управления; доставка и оплата не выполняются.</p>}
+    <h2>Что сохраняет форма</h2>
+    <p>Выбранные букеты и дополнения, сумму на момент отправки, дату и способ получения, контакт покупателя, а при доставке — контакт получателя и адрес. В индивидуальной заявке сохраняются бюджет, пожелания и выбранный способ связи.</p>
+    <h2>Для чего нужны эти сведения</h2>
+    <p>Чтобы ответить на заявку, согласовать состав и стоимость букета, а затем организовать получение. Контактные данные доступны только в закрытой панели управления. Telegram-уведомления о новых заявках не содержат телефонов и адресов.</p>
+    <h2>Что хранится в браузере</h2>
+    <p>Корзина и избранные букеты сохраняются на вашем устройстве. Контактные данные из формы в браузерное хранилище не записываются.</p>
+    {(catalog.settings.contactPhone || catalog.settings.contactTelegram) && <><h2>Вопросы по заявке</h2><p>Укажите номер заявки при обращении. {catalog.settings.contactPhone && <a href={'tel:' + catalog.settings.contactPhone}>{catalog.settings.contactPhone}</a>} {catalog.settings.contactTelegram && <a href={'https://t.me/' + catalog.settings.contactTelegram}>Telegram мастерской</a>}</p></>}
+  </article>
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import SiteControls from './SiteControls';
+import '../styles/header.css';
+import type { CatalogSnapshot } from '../lib/catalog-types';
+const { catalog } = Astro.props as { catalog: CatalogSnapshot };
+---
+<div class="top-strip"><div class="container"><span>ЦВЕТЫ И БУКЕТЫ</span><span>ПЕРМЬ</span><span>{catalog.settings.demoMode ? "ДЕМО-ПРОЕКТ" : "ДОСТАВКА И САМОВЫВОЗ"}</span></div></div>
+<header class="site-header site-header--enhanced" data-header>
+  <div class="container header-inner">
+    <a class="brand-placeholder" href="/" aria-label="Цветочная мастерская — главная"><span>Цветочная</span><span>мастерская</span></a>
+    <nav class="desktop-nav" aria-label="Основная навигация">
+      <a href="/#catalog">Букеты</a><a href="/#gifts">К букету</a><a href="/#delivery">Доставка</a><a href="/#studio">Мастерская</a>
+    </nav>
+    <SiteControls initialCatalog={catalog} client:load />
+    <details class="mobile-menu"><summary aria-label="Меню" aria-controls="mobile-navigation"><span></span><span></span></summary><nav id="mobile-navigation" aria-label="Мобильная навигация"><a href="/#catalog">Букеты</a><a href="/#gifts">К букету</a><a href="/#delivery">Доставка</a><a href="/#studio">Мастерская</a><a href="/?favorites=1#catalog">Избранное</a><a href="/cart/">Корзина</a></nav></details>
+  </div>
+</header>
+<script>
+  import '../scripts/header';
+</script>

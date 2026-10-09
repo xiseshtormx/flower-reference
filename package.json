@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env ./node_modules/astro/bin/astro.mjs dev",
     "build": "node --env-file-if-exists=.env ./node_modules/astro/bin/astro.mjs build",
+    "build:demo": "node scripts/build-demo.mjs",
+    "check:demo": "node scripts/check-demo.mjs",
     "preview": "node --env-file-if-exists=.env scripts/start.mjs",
     "check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",

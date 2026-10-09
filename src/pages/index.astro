@@ -1,11 +1,12 @@
 ---
+import { isPagesDemo, sitePath } from '../lib/site-path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Catalog from '../components/Catalog';
 import GiftSets from '../components/GiftSets';
 import RequestForm from '../components/RequestForm';
 import Hero from '../components/Hero.astro';
 import BotanicalMark from '../components/BotanicalMark.astro';
-import { publicCatalog } from '../server/database';
+import { storefrontCatalog as publicCatalog } from '../server/storefront';
 import { formatPrice } from '../data/products';
 const catalog = publicCatalog();
 ---
@@ -26,7 +27,7 @@ const catalog = publicCatalog();
     </div>
   </section>
   <section class="section container studio-section" id="studio" aria-labelledby="studio-title">
-    <div class="studio-image" data-reveal><img src="/images/pastel.jpg" alt="Пастельный букет: розовые розы, сиреневые цветы и зелень" width="1100" height="825" loading="lazy" /><span class="studio-photo-caption">Пастельная палитра</span></div>
+    <div class="studio-image" data-reveal><img src={sitePath('/images/pastel.jpg')} alt="Пастельный букет: розовые розы, сиреневые цветы и зелень" width="1100" height="825" loading="lazy" /><span class="studio-photo-caption">Пастельная палитра</span></div>
     <div class="studio-copy" data-reveal>
       <p class="eyebrow">О ПОДБОРКЕ</p><h2 id="studio-title">Внимание<br /><em>к сочетаниям</em></h2>
       <p>Спокойные монобукеты и свободные композиции. Светлые, пастельные и насыщенные оттенки — выбирайте то, что нравится вам.</p>
@@ -47,7 +48,7 @@ const catalog = publicCatalog();
       <article data-reveal><svg class="delivery-symbol" width="34" height="34" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 13h22v15H5V13ZM3 13l4-9h18l4 9M12 28V17h8v11" stroke="currentColor" stroke-width="1.2"/><path d="M3 13c1 4 5 4 7 0 1 4 5 4 6 0 1 4 5 4 6 0 2 4 6 4 7 0" stroke="currentColor" stroke-width="1.2"/></svg><h3>Самовывоз</h3><p>{catalog.settings.pickupEnabled ? (catalog.settings.pickupAddress || "Выберите дату и время. Адрес мастерской уточняется при подтверждении.") : "Самовывоз временно недоступен."}</p><span class="delivery-bottom">Бесплатно</span></article>
       <article data-reveal><svg class="delivery-symbol" width="34" height="34" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="4" y="9" width="24" height="19" stroke="currentColor" stroke-width="1.2"/><path d="M4 16h24M16 9v19M16 9C4 9 7-2 13 4l3 5Zm0 0c12 0 9-11 3-5l-3 5Z" stroke="currentColor" stroke-width="1.2"/></svg><h3>Другому получателю</h3><p>Контакты покупателя и получателя заполняются отдельно. Текст открытки можно оставить в пожеланиях.</p><span class="delivery-bottom">Добавьте несколько слов</span></article>
     </div>
-    <p class="delivery-disclaimer">{catalog.settings.demoMode ? "Учебный проект: формы сохраняют тестовые заявки. Доставка и оплата не выполняются." : "После заявки флорист подтвердит наличие, состав и время. Оплата — по согласованию с мастерской."}</p>
+    <p class="delivery-disclaimer">{isPagesDemo ? "Демонстрация сайта: можно выбрать букет и посмотреть оформление. Заявки не отправляются." : catalog.settings.demoMode ? "Учебный проект: формы сохраняют тестовые заявки. Доставка и оплата не выполняются." : "После заявки флорист подтвердит наличие, состав и время. Оплата — по согласованию с мастерской."}</p>
   </section>
   <section class="section container faq-section" id="faq" aria-labelledby="faq-title">
     <div data-reveal><h2 id="faq-title">Перед заказом</h2><p>О размерах, датах<br />и дополнениях к букету.</p></div>
@@ -56,7 +57,7 @@ const catalog = publicCatalog();
       <details><summary>Можно ли выбрать будущую дату?<span aria-hidden="true">+</span></summary><p>Да. Нажмите на дату в шапке или выберите её при оформлении. Доступность зависит от расписания мастерской и времени подготовки букета. Время указано по Перми.</p></details>
       <details><summary>Где добавить открытку или вазу?<span aria-hidden="true">+</span></summary><p>На странице букета отметьте нужные дополнения — они включатся в итоговую стоимость. Или выберите готовый набор в разделе «Букет, ваза и открытка».</p></details>
       <details><summary>Состав будет точно как на фотографии?<span aria-hidden="true">+</span></summary><p>{catalog.settings.demoMode ? "В подборке используются демонстрационные фотографии и составы." : "Сезонные цветы могут отличаться от фотографии."} Замены в составе флорист согласует с вами перед сборкой.</p></details>
-      <details><summary>Это настоящий цветочный магазин?<span aria-hidden="true">+</span></summary><p>{catalog.settings.demoMode ? "Сейчас это учебный проект. Заявка сохранится в тестовой базе, но цветы не доставляются и деньги не списываются." : "Заявки поступают в мастерскую. После отправки флорист свяжется с вами для подтверждения. Онлайн-оплата не подключена."}</p></details>
+      <details><summary>Это настоящий цветочный магазин?<span aria-hidden="true">+</span></summary><p>{isPagesDemo ? "Это демонстрационный сайт для портфолио. Каталог, выбор размера, избранное и корзину можно попробовать. Заявки не отправляются, доставка и оплата не выполняются." : catalog.settings.demoMode ? "Сейчас это учебный проект. Заявка сохранится в тестовой базе, но цветы не доставляются и деньги не списываются." : "Заявки поступают в мастерскую. После отправки флорист свяжется с вами для подтверждения. Онлайн-оплата не подключена."}</p></details>
     </div>
   </section>
 </BaseLayout>

@@ -1,3 +1,4 @@
+import { sitePath } from '../lib/site-path';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icon';
@@ -36,7 +37,7 @@ export default function SiteControls({ initialCatalog }: { initialCatalog: Catal
       }} aria-haspopup="dialog">
         <Icon name="calendar" size={18} /><span>{dateLabel(cart.date)}</span>
       </button>
-      <a className="icon-button favorite-link" href="/?favorites=1#catalog" aria-label="Избранные букеты"><Icon name="heart" /></a>
+      <a className="icon-button favorite-link" href={sitePath('/?favorites=1#catalog')} aria-label="Избранные букеты"><Icon name="heart" /></a>
       <button className="basket-control" type="button" aria-label={'Открыть корзину, товаров: ' + count} aria-haspopup="dialog" onClick={() => setKind('cart')}>
         <Icon name="bag" /><span className="cart-count" aria-live="polite">{count}</span>
       </button>
@@ -63,14 +64,14 @@ export default function SiteControls({ initialCatalog }: { initialCatalog: Catal
             <div className="drawer-summary">
               <div className="summary-row"><span>Товары</span><strong>{formatPrice(cartSubtotal(cart, catalog))}</strong></div>
               <p className="muted">Доставка рассчитывается при оформлении.</p>
-              <a href="/cart/" className="button button-primary full-width">Перейти к оформлению</a>
+              <a href={sitePath('/cart/')} className="button button-primary full-width">Перейти к оформлению</a>
               <button type="button" className="text-button" onClick={() => setKind(null)}>Продолжить выбирать</button>
             </div>
           </> : <div className="empty-cart">
             <Icon name="flower" size={48} />
             <h3>Здесь будет ваш букет</h3>
             <p>Выберите цветы в каталоге. Мы сохраним ваш выбор в этом браузере.</p>
-            <a href="/#catalog" className="button button-primary" onClick={() => setKind(null)}>Выбрать букет</a>
+            <a href={sitePath('/#catalog')} className="button button-primary" onClick={() => setKind(null)}>Выбрать букет</a>
           </div>}
         </div>
       </dialog>, document.body,

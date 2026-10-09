@@ -1,3 +1,4 @@
+import { sitePath } from '../lib/site-path';
 import { useEffect, useRef, useState } from 'react';
 import { formatPrice, type Product } from '../data/products.ts';
 import { useCart, useFavorites, toggleFavorite, addToCart } from '../lib/store.ts';
@@ -11,13 +12,13 @@ function ProductCard({ product, date, favorite, catalog }: { product: Product; d
   const available = availableOn(product.id, date, catalog);
   return <article className="product-card" data-reveal>
     <div className="product-image-wrap">
-      <a href={'/bouquet/' + product.id + '/'} aria-label={'Подробнее: ' + product.name}>
-        <img src={product.image} alt={product.name + ', размер ' + product.photoSize} width="550" height="688" loading="lazy" decoding="async" style={{ objectPosition: product.imagePosition }} />
+      <a href={sitePath('/bouquet/' + product.id + '/')} aria-label={'Подробнее: ' + product.name}>
+        <img src={sitePath(product.image)} alt={product.name + ', размер ' + product.photoSize} width="550" height="688" loading="lazy" decoding="async" style={{ objectPosition: product.imagePosition }} />
       </a>
       {product.label && <span className="product-label">{product.label}</span>}
       <button type="button" className={'favorite-button' + (favorite ? ' is-favorite' : '')} aria-label={(favorite ? 'Убрать из избранного: ' : 'Добавить в избранное: ') + product.name} aria-pressed={favorite} onClick={() => toggleFavorite(product.id)}><Icon name="heart" size={18} /></button>
     </div>
-    <h3><a href={'/bouquet/' + product.id + '/'}>{product.name}</a></h3>
+    <h3><a href={sitePath('/bouquet/' + product.id + '/')}>{product.name}</a></h3>
     <p className="product-subtitle">{product.subtitle}{product.photoSize !== "M" ? " · На фото размер " + product.photoSize : ""}</p>
     <div className="product-card-bottom">
       <strong>{formatPrice(product.prices.M)}</strong>

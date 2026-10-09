@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../lib/site-path';
 import { formatPrice } from '../data/products';
 import type { CatalogSnapshot } from '../lib/catalog-types';
 import HeroBotanical from './HeroBotanical.astro';
@@ -16,16 +17,16 @@ const bouquet = catalog.products.find(product => product.id === catalog.settings
     <div class="flower-hero-actions" data-hero-detail><a class="flower-hero-action" href="#catalog">Выбрать букет</a><a class="underlined-link flower-hero-secondary" href="#individual">Свои пожелания</a></div>
     <div class="flower-hero-palettes" data-hero-detail>
       <p>Какие оттенки вам ближе?</p>
-      <div><a href="/?tone=Светлые#catalog"><span class="palette-dot palette-light" aria-hidden="true"></span>Светлые</a><a href="/?tone=Розовые#catalog"><span class="palette-dot palette-pink" aria-hidden="true"></span>Розовые</a><a href="/?tone=Яркие#catalog"><span class="palette-dot palette-bright" aria-hidden="true"></span>Яркие</a></div>
+      <div><a href={sitePath('/?tone=Светлые#catalog')}><span class="palette-dot palette-light" aria-hidden="true"></span>Светлые</a><a href={sitePath('/?tone=Розовые#catalog')}><span class="palette-dot palette-pink" aria-hidden="true"></span>Розовые</a><a href={sitePath('/?tone=Яркие#catalog')}><span class="palette-dot palette-bright" aria-hidden="true"></span>Яркие</a></div>
     </div>
     <HeroBotanical />
   </div>
   {bouquet && <div class="flower-hero-stage">
     <span class="flower-hero-frame" data-hero-frame aria-hidden="true"></span>
-    <a data-hero-photo class="flower-hero-photo" href={'/bouquet/' + bouquet.id + '/'} aria-label={'Посмотреть букет «' + bouquet.name + '»'}>
-      <div class="flower-photo-drift" data-hero-drift><div class="flower-photo-entry" data-hero-photo-entry><div class="flower-photo-hover"><img src={bouquet.image} alt={bouquet.name} width="1100" height="1650" fetchpriority="high" decoding="async" style={'object-position:' + bouquet.imagePosition} /></div></div></div>
+    <a data-hero-photo class="flower-hero-photo" href={sitePath('/bouquet/' + bouquet.id + '/')} aria-label={'Посмотреть букет «' + bouquet.name + '»'}>
+      <div class="flower-photo-drift" data-hero-drift><div class="flower-photo-entry" data-hero-photo-entry><div class="flower-photo-hover"><img src={sitePath(bouquet.image)} alt={bouquet.name} width="1100" height="1650" fetchpriority="high" decoding="async" style={'object-position:' + bouquet.imagePosition} /></div></div></div>
     </a>
-    <div class="flower-hero-caption" data-hero-detail><a class="flower-hero-product" href={'/bouquet/' + bouquet.id + '/'}>{bouquet.name}<small>На фото — размер {bouquet.photoSize}</small></a><div class="flower-hero-caption-end"><span class="flower-hero-price">{formatPrice(bouquet.prices[bouquet.photoSize])}</span><a class="flower-hero-details" href={'/bouquet/' + bouquet.id + '/'}>Подробнее</a></div></div>
+    <div class="flower-hero-caption" data-hero-detail><a class="flower-hero-product" href={sitePath('/bouquet/' + bouquet.id + '/')}>{bouquet.name}<small>На фото — размер {bouquet.photoSize}</small></a><div class="flower-hero-caption-end"><span class="flower-hero-price">{formatPrice(bouquet.prices[bouquet.photoSize])}</span><a class="flower-hero-details" href={sitePath('/bouquet/' + bouquet.id + '/')}>Подробнее</a></div></div>
   </div>}
 </section>
 

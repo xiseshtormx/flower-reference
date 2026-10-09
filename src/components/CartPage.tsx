@@ -1,3 +1,4 @@
+import { isPagesDemo, sitePath } from '../lib/site-path';
 import { useEffect, useRef, useState } from 'react';
 import { formatPrice } from '../data/products.ts';
 import type { CatalogSnapshot } from '../lib/catalog-types.ts';
@@ -15,6 +16,7 @@ export default function CartPage({ initialCatalog }: { initialCatalog: CatalogSn
   const [delivery, setDelivery] = useState<'courier' | 'pickup'>(settings.courierEnabled ? 'courier' : 'pickup');
   const [selfRecipient, setSelfRecipient] = useState(false);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const [demoPreview, setDemoPreview] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [timeSlot, setTimeSlot] = useState('');
@@ -26,16 +28,22 @@ export default function CartPage({ initialCatalog }: { initialCatalog: CatalogSn
   const unavailable = cart.lines.some(line => !availableOn(line.productId, cart.date, catalog) || line.extras.some(id => !extras.some(e => e.id === id)));
   useEffect(() => { if (!slots.includes(timeSlot)) setTimeSlot(''); }, [cart.date, slots.join(',')]);
   useEffect(() => { if (delivery === 'courier' && !settings.courierEnabled) setDelivery('pickup'); else if (delivery === 'pickup' && !settings.pickupEnabled) setDelivery('courier'); }, [settings.courierEnabled, settings.pickupEnabled]);
-  if (receipt) return <div className="confirmation-panel" role="status"><span className="confirmation-icon"><Icon name="check" size={38} /></span><span className="eyebrow">{receipt.demo ? 'ТЕСТОВАЯ ЗАЯВКА' : 'ЗАЯВКА ПОЛУЧЕНА'}</span><h2>{receipt.number}</h2><p>Дата: {dateLabel(receipt.date)}.<br />Сумма по каталогу — {formatPrice(receipt.total!)}.</p><p className="muted">{receipt.demo ? 'Заявка сохранена в панели управления для проверки. Цветы не доставляются, деньги не списываются.' : 'Флорист свяжется с вами и подтвердит состав, время и сумму. Оплата — по согласованию с мастерской.'}</p><a className="button button-primary" href="/#catalog">Вернуться к букетам</a></div>;
-  if (!cart.lines.length) return <div className="empty-cart cart-page-empty"><Icon name="flower" size={58} /><h2>Выберите ваш первый букет</h2><p>После добавления здесь появятся товары, дополнения и оформление доставки.</p><a className="button button-primary" href="/#catalog">Открыть каталог</a></div>;
+  if (demoPreview) return <div className="confirmation-panel" role="status"><span className="confirmation-icon"><Icon name="flower" size={38} /></span><span className="eyebrow">ДЕМОНСТРАЦИЯ ОФОРМЛЕНИЯ</span><h2>Ваш выбор</h2><p>Дата: {dateLabel(cart.date)}.<br />Букеты, дополнения и {delivery === 'courier' ? 'доставка' : 'самовывоз'} — {formatPrice(subtotal + deliveryCost)}.</p><p className="muted">Это пример оформления. Заявка не отправлена, контакты не сохранены. Выбранные букеты остаются в корзине.</p><button className="button button-primary" type="button" onClick={() => setDemoPreview(false)}>Вернуться к оформлению</button></div>;
+  if (receipt) return <div className="confirmation-panel" role="status"><span className="confirmation-icon"><Icon name="check" size={38} /></span><span className="eyebrow">{receipt.demo ? 'ТЕСТОВАЯ ЗАЯВКА' : 'ЗАЯВКА ПОЛУЧЕНА'}</span><h2>{receipt.number}</h2><p>Дата: {dateLabel(receipt.date)}.<br />Сумма по каталогу — {formatPrice(receipt.total!)}.</p><p className="muted">{receipt.demo ? 'Заявка сохранена в панели управления для проверки. Цветы не доставляются, деньги не списываются.' : 'Флорист свяжется с вами и подтвердит состав, время и сумму. Оплата — по согласованию с мастерской.'}</p><a className="button button-primary" href={sitePath('/#catalog')}>Вернуться к букетам</a></div>;
+  if (!cart.lines.length) return <div className="empty-cart cart-page-empty"><Icon name="flower" size={58} /><h2>Выберите ваш первый букет</h2><p>После добавления здесь появятся товары, дополнения и оформление доставки.</p><a className="button button-primary" href={sitePath('/#catalog')}>Открыть каталог</a></div>;
   return <div className="checkout-grid">
     <div>
-      <div className="checkout-section-heading"><h2>Ваши букеты</h2><a href="/#catalog" className="text-link">Добавить ещё <Icon name="plus" size={16} /></a></div>
+      <div className="checkout-section-heading"><h2>Ваши букеты</h2><a href={sitePath('/#catalog')} className="text-link">Добавить ещё <Icon name="plus" size={16} /></a></div>
       <CartLines cart={cart} catalog={catalog} />
       <p className="cart-extras-note"><Icon name="card" size={20} />Открытку и вазу можно добавить на странице выбранного букета.</p>
       <form id="checkout-form" className="checkout-form" onSubmit={async event => {
         event.preventDefault();
         if (sending || !validDate || unavailable || !cart.lines.length) return;
+        if (isPagesDemo) {
+          setDemoPreview(true);
+          requestAnimationFrame(() => document.querySelector('.confirmation-panel')?.scrollIntoView({ block: 'start' }));
+          return;
+        }
         const fields = new FormData(event.currentTarget);
         const value = (key: string) => String(fields.get(key) ?? '');
         const body = { lines: cart.lines, date: cart.date, delivery, timeSlot,
@@ -79,13 +87,13 @@ export default function CartPage({ initialCatalog }: { initialCatalog: CatalogSn
           {delivery === 'courier' && <label className="check-field"><input type="checkbox" checked={selfRecipient} onChange={event => setSelfRecipient(event.target.checked)} /><span>Я получатель букета</span></label>}
           {!selfRecipient && delivery === 'courier' && <div className="form-grid recipient-fields"><label className="form-field"><span>Имя получателя</span><input name="recipient-name" placeholder="Кому доставить цветы" required minLength={2} maxLength={80} /></label><label className="form-field"><span>Телефон получателя</span><input name="recipient-phone" type="tel" placeholder="+7 999 123-45-67" required minLength={10} maxLength={24} /></label></div>}
           <label className="form-field"><span>{cart.lines.some(line => line.extras.includes('postcard')) ? 'Текст открытки и пожелания' : 'Пожелания к заказу'}</span><textarea name="comment" rows={3} maxLength={1000} placeholder="Что важно учесть при сборке и доставке" /></label>
-          <label className="check-field consent-field"><input type="checkbox" name="consent" required /><span>Можно связаться со мной по заявке. <a href="/privacy/" target="_blank" rel="noopener">Как используются данные</a></span></label>
+          <label className="check-field consent-field"><input type="checkbox" name="consent" required /><span>Можно связаться со мной по заявке. <a href={sitePath('/privacy/')} target="_blank" rel="noopener">Как используются данные</a></span></label>
           {settings.demoMode && <label className="check-field consent-field"><input type="checkbox" name="demoAcknowledged" required /><span>Это тестовая заявка. Использую тестовые контакты.</span></label>}
           <label className="form-trap" aria-hidden="true">Ваш сайт<input name="website" tabIndex={-1} autoComplete="off" /></label>
         </fieldset>
         {error && <p className="form-feedback form-feedback-error" role="alert">{error}</p>}
       </form>
     </div>
-    <aside className="checkout-summary"><span className="eyebrow">ВАША ЗАЯВКА</span><h2>Итого</h2><div className="summary-row"><span>Букеты и дополнения</span><span>{formatPrice(subtotal)}</span></div><div className="summary-row"><span>{delivery === 'courier' ? 'Доставка' : 'Самовывоз'}</span><span>{deliveryCost ? formatPrice(deliveryCost) : 'Бесплатно'}</span></div><div className="summary-total"><span>Сумма</span><strong aria-live="polite">{formatPrice(subtotal + deliveryCost)}</strong></div><button className="button button-primary full-width" type="submit" form="checkout-form" disabled={sending || !validDate || unavailable}>{sending ? 'Отправляем…' : 'Отправить заявку'}</button><p className="checkout-demo-note">{settings.demoMode ? 'Тестовая заявка сохранится в панели. Доставка и оплата не выполняются.' : 'Наличие, состав и время подтвердит флорист. Онлайн-оплата не подключена.'}</p></aside>
+    <aside className="checkout-summary"><span className="eyebrow">ВАША ЗАЯВКА</span><h2>Итого</h2><div className="summary-row"><span>Букеты и дополнения</span><span>{formatPrice(subtotal)}</span></div><div className="summary-row"><span>{delivery === 'courier' ? 'Доставка' : 'Самовывоз'}</span><span>{deliveryCost ? formatPrice(deliveryCost) : 'Бесплатно'}</span></div><div className="summary-total"><span>Сумма</span><strong aria-live="polite">{formatPrice(subtotal + deliveryCost)}</strong></div><button className="button button-primary full-width" type="submit" form="checkout-form" disabled={sending || !validDate || unavailable}>{sending ? 'Отправляем…' : isPagesDemo ? 'Посмотреть оформление' : 'Отправить заявку'}</button><p className="checkout-demo-note">{isPagesDemo ? 'Демонстрация оформления. Заявки не отправляются, доставка и оплата не выполняются.' : settings.demoMode ? 'Тестовая заявка сохранится в панели. Доставка и оплата не выполняются.' : 'Наличие, состав и время подтвердит флорист. Онлайн-оплата не подключена.'}</p></aside>
   </div>;
 }

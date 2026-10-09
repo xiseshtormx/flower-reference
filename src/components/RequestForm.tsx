@@ -1,3 +1,4 @@
+import { isPagesDemo, sitePath } from '../lib/site-path';
 import { useRef, useState } from 'react';
 import Icon from './Icon';
 import { formatPrice } from '../data/products.ts';
@@ -12,9 +13,12 @@ export default function RequestForm({ initialCatalog }: { initialCatalog: Catalo
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const [demoPreview, setDemoPreview] = useState(false);
   const attempt = useRef({ signature: '', key: '' });
+  if (demoPreview) return <div className="request-result" role="status"><Icon name="flower" size={32} /><h3>Пример индивидуальной заявки</h3><p>Бюджет: {formatPrice(Number(budget))}.</p><p className="muted">Так выглядит завершение формы. Это демонстрация сайта: пожелания и контакты не отправлены.</p><button className="text-button" type="button" onClick={() => setDemoPreview(false)}>Вернуться к форме</button></div>;
   return receipt ? <div className="request-result" role="status"><Icon name="check" size={32} /><h3>Заявка {receipt.number} получена</h3><p>Бюджет: {formatPrice(Number(budget))}.</p><p className="muted">{receipt.demo ? 'Тестовая заявка сохранена в панели управления. Это учебный проект.' : 'Флорист свяжется с вами, предложит состав и согласует стоимость.'}</p><button className="text-button" type="button" onClick={() => { setReceipt(null); attempt.current = { signature: '', key: '' }; }}>Оставить ещё одну заявку</button></div> : <form className="request-form" data-reveal onSubmit={async event => {
     event.preventDefault(); if (sending) return;
+    if (isPagesDemo) { setDemoPreview(true); return; }
     const fields = new FormData(event.currentTarget);
     const value = (name: string) => String(fields.get(name) ?? '');
     const body = { budget: Number(budget), date: value('date'), buyerName: value('name'), contactMethod, contact: value('contact'), comment: value('wishes'), consent: fields.get('consent') === 'on', demoAcknowledged: fields.get('demoAcknowledged') === 'on', website: value('website') };
@@ -30,12 +34,12 @@ export default function RequestForm({ initialCatalog }: { initialCatalog: Catalo
       <label className="form-field"><span>Что вам нравится?</span><textarea name="wishes" placeholder="Например: светлые цветы, свободная форма, без роз" rows={3} maxLength={1000} /></label>
       <label className="form-field"><span>Ваше имя</span><input name="name" autoComplete="given-name" required minLength={2} maxLength={80} placeholder="Как к вам обращаться" /></label>
       <div className="form-grid"><label className="form-field"><span>Как связаться</span><select value={contactMethod} onChange={event => setContactMethod(event.target.value as 'phone' | 'telegram')}><option value="phone">По телефону</option><option value="telegram">В Telegram</option></select></label><label className="form-field"><span>{contactMethod === 'phone' ? 'Телефон' : 'Имя в Telegram'}</span><input key={contactMethod} name="contact" type={contactMethod === 'phone' ? 'tel' : 'text'} placeholder={contactMethod === 'phone' ? '+7 999 123-45-67' : '@username'} required minLength={contactMethod === 'phone' ? 10 : 5} maxLength={33} /></label></div>
-      <label className="check-field consent-field"><input type="checkbox" name="consent" required /><span>Можно связаться со мной по заявке. <a href="/privacy/" target="_blank" rel="noopener">Как используются данные</a></span></label>
+      <label className="check-field consent-field"><input type="checkbox" name="consent" required /><span>Можно связаться со мной по заявке. <a href={sitePath('/privacy/')} target="_blank" rel="noopener">Как используются данные</a></span></label>
       {settings.demoMode && <label className="check-field consent-field"><input type="checkbox" name="demoAcknowledged" required /><span>Это тестовая заявка. Использую тестовые контакты.</span></label>}
       <label className="form-trap" aria-hidden="true">Ваш сайт<input name="website" tabIndex={-1} autoComplete="off" /></label>
-      <button className="button button-primary full-width" type="submit">{sending ? 'Отправляем…' : 'Отправить пожелания'}</button>
+      <button className="button button-primary full-width" type="submit">{sending ? 'Отправляем…' : isPagesDemo ? 'Посмотреть пример заявки' : 'Отправить пожелания'}</button>
     </fieldset>
     {error && <p className="form-feedback form-feedback-error" role="alert">{error}</p>}
-    <p className="request-demo-note">{settings.demoMode ? 'Пожелания сохранятся как тестовая заявка в панели.' : 'Состав, стоимость и дату согласуем с вами перед подтверждением.'}</p>
+    <p className="request-demo-note">{isPagesDemo ? 'Демонстрация формы. Используйте тестовые контакты: заявки не отправляются.' : settings.demoMode ? 'Пожелания сохранятся как тестовая заявка в панели.' : 'Состав, стоимость и дату согласуем с вами перед подтверждением.'}</p>
   </form>;
 }

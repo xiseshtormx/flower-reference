@@ -1,4 +1,5 @@
 ---
+import { isPagesDemo, sitePath } from '../lib/site-path';
 import FooterGarden from './FooterGarden.astro';
 import type { CatalogSnapshot } from '../lib/catalog-types';
 const { catalog } = Astro.props as { catalog: CatalogSnapshot };
@@ -9,20 +10,20 @@ const { catalog } = Astro.props as { catalog: CatalogSnapshot };
       <div class="garden-footer-intro">
         <p class="garden-footer-kicker">Цветочная мастерская · Пермь</p>
         <p class="garden-footer-title">Цветы рядом</p>
-        <a class="garden-footer-catalog" href="/#catalog">Выбрать букет</a>
+        <a class="garden-footer-catalog" href={sitePath('/#catalog')}>Выбрать букет</a>
       </div>
       <nav class="garden-footer-links garden-footer-selection" aria-label="Выбрать цветы">
         <p class="garden-footer-label">Выбрать</p>
-        <a href="/#catalog">Все букеты</a>
-        <a href="/#gifts">Ваза и открытка</a>
-        <a href="/#individual">Свои пожелания</a>
+        <a href={sitePath('/#catalog')}>Все букеты</a>
+        <a href={sitePath('/#gifts')}>Ваза и открытка</a>
+        <a href={sitePath('/#individual')}>Свои пожелания</a>
       </nav>
       <nav class="garden-footer-links garden-footer-information" aria-label="Узнать о заказе">
         <p class="garden-footer-label">Узнать</p>
-        <a href="/#delivery">Доставка и самовывоз</a>
-        <a href="/#faq">Ответы на вопросы</a>
-        <a href="/cart/">Корзина</a>
-        <a href="/privacy/">О данных заявки</a>
+        <a href={sitePath('/#delivery')}>Доставка и самовывоз</a>
+        <a href={sitePath('/#faq')}>Ответы на вопросы</a>
+        <a href={sitePath('/cart/')}>Корзина</a>
+        <a href={sitePath('/privacy/')}>О данных заявки</a>
         {catalog.settings.contactPhone && <a href={"tel:" + catalog.settings.contactPhone}>{catalog.settings.contactPhone}</a>}
         {catalog.settings.contactTelegram && <a href={"https://t.me/" + catalog.settings.contactTelegram}>Telegram мастерской</a>}
       </nav>
@@ -30,7 +31,7 @@ const { catalog } = Astro.props as { catalog: CatalogSnapshot };
     </div>
     <div class="garden-footer-bottom">
       <span>Референс цветочного · 2026</span>
-      <p>{catalog.settings.demoMode ? "Учебный проект. Заявки сохраняются для проверки." : "Каждый заказ подтверждает флорист."}</p>
+      <p>{isPagesDemo ? "Демонстрация сайта. Заказы не принимаются." : catalog.settings.demoMode ? "Учебный проект. Заявки сохраняются для проверки." : "Каждый заказ подтверждает флорист."}</p>
       <a class="garden-footer-top" href="#main">Наверх</a>
     </div>
   </div>

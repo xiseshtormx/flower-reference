@@ -1,7 +1,11 @@
 ---
+import { sitePath } from '../../lib/site-path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProductView from '../../components/ProductView';
-import { publicCatalog } from '../../server/database';
+import { storefrontCatalog as publicCatalog } from '../../server/storefront';
+export function getStaticPaths() {
+  return publicCatalog().products.map(product => ({ params: { id: product.id } }));
+}
 const catalog = publicCatalog();
 const products = catalog.products;
 const product = products.find(p => p.id === Astro.params.id);
@@ -10,8 +14,8 @@ const related = product ? products.filter((item) => item.id !== product.id && it
 ---
 <BaseLayout catalog={catalog} title={product ? product.name + ' — Референс цветочного' : 'Букет не найден — Референс цветочного'} description={product?.description}>
   {product ? <div class="container">
-    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span aria-hidden="true">/</span><a href="/#catalog">Букеты</a><span aria-hidden="true">/</span><span aria-current="page">{product.name}</span></nav>
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href={sitePath('/')}>Главная</a><span aria-hidden="true">/</span><a href={sitePath('/#catalog')}>Букеты</a><span aria-hidden="true">/</span><span aria-current="page">{product.name}</span></nav>
     <ProductView product={product} initialCatalog={catalog} client:load />
-    {related.length > 0 && <section class="related-section section"><div class="section-heading"><div><p class="eyebrow">В ТЕХ ЖЕ ОТТЕНКАХ</p><h2>Похожие букеты</h2></div><a class="text-link" href="/#catalog">Все букеты</a></div><div class="related-grid">{related.map((item) => <a data-reveal href={'/bouquet/' + item.id + '/'}><img src={item.image} alt={item.name} width="550" height="688" loading="lazy" style={'object-position:' + item.imagePosition} /><h3>{item.name}</h3><span>{item.subtitle}</span></a>)}</div></section>}
-  </div> : <section class="container not-found"><p class="eyebrow">404</p><h1>Этот букет<br />не найден.</h1><p>Посмотрите актуальную подборку в каталоге.</p><a class="button button-primary" href="/#catalog">Вернуться к букетам</a></section>}
+    {related.length > 0 && <section class="related-section section"><div class="section-heading"><div><p class="eyebrow">В ТЕХ ЖЕ ОТТЕНКАХ</p><h2>Похожие букеты</h2></div><a class="text-link" href={sitePath('/#catalog')}>Все букеты</a></div><div class="related-grid">{related.map((item) => <a data-reveal href={sitePath('/bouquet/' + item.id + '/')}><img src={sitePath(item.image)} alt={item.name} width="550" height="688" loading="lazy" style={'object-position:' + item.imagePosition} /><h3>{item.name}</h3><span>{item.subtitle}</span></a>)}</div></section>}
+  </div> : <section class="container not-found"><p class="eyebrow">404</p><h1>Этот букет<br />не найден.</h1><p>Посмотрите актуальную подборку в каталоге.</p><a class="button button-primary" href={sitePath('/#catalog')}>Вернуться к букетам</a></section>}
 </BaseLayout>

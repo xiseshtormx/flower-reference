@@ -1,3 +1,4 @@
+import { sitePath } from '../lib/site-path';
 import { useRef, useEffect, useState } from 'react';
 import { type Product, type Size, type ExtraId, sizes, formatPrice } from '../data/products.ts';
 import { addToCart, useCart, useFavorites, toggleFavorite } from '../lib/store.ts';
@@ -28,8 +29,8 @@ export default function ProductView({ product: initialProduct, initialCatalog }:
   }, [zoom]);
   return <div className="product-detail">
     <div className="detail-photo-column">
-      <button className="detail-photo" type="button" aria-label="Увеличить фотографию букета" onClick={() => setZoom(true)}><img src={image} alt={product.name + ', размер ' + product.photoSize} width="1100" height="1375" fetchPriority="high" style={{ objectPosition: product.imagePosition }} /><span className="zoom-caption"><Icon name="plus" size={16} />Рассмотреть букет</span></button>
-      {product.images.length > 1 && <div className="photo-thumbnails" aria-label="Фотографии букета">{product.images.map((url, index) => <button type="button" key={url} aria-label={"Фотография " + (index + 1)} aria-pressed={photo === index} onClick={() => setPhoto(index)}><img src={url} alt="" width="64" height="76" /></button>)}</div>}
+      <button className="detail-photo" type="button" aria-label="Увеличить фотографию букета" onClick={() => setZoom(true)}><img src={sitePath(image)} alt={product.name + ', размер ' + product.photoSize} width="1100" height="1375" fetchPriority="high" style={{ objectPosition: product.imagePosition }} /><span className="zoom-caption"><Icon name="plus" size={16} />Рассмотреть букет</span></button>
+      {product.images.length > 1 && <div className="photo-thumbnails" aria-label="Фотографии букета">{product.images.map((url, index) => <button type="button" key={url} aria-label={"Фотография " + (index + 1)} aria-pressed={photo === index} onClick={() => setPhoto(index)}><img src={sitePath(url)} alt="" width="64" height="76" /></button>)}</div>}
       <div className="photo-note"><span>Фотография букета</span><span>На фото размер {product.photoSize}</span></div>
     </div>
     <div className="detail-info">
@@ -46,6 +47,6 @@ export default function ProductView({ product: initialProduct, initialCatalog }:
         <details><summary>Как ухаживать за цветами<span>+</span></summary><p>Поставьте букет в чистую вазу, обновите срезы и регулярно меняйте воду. Выберите прохладное место вдали от прямого солнца и батареи.</p></details>
       </div>
     </div>
-    <dialog ref={zoomRef} className="zoom-dialog" aria-label="Увеличенная фотография букета" onCancel={() => setZoom(false)} onClick={(event) => { if (event.target === event.currentTarget) setZoom(false); }}><button className="zoom-close icon-button" aria-label="Закрыть фотографию" type="button" onClick={() => setZoom(false)}><Icon name="close" /></button><img src={image} alt={product.name + ', увеличенная фотография'} width="1100" height="1375" /></dialog>
+    <dialog ref={zoomRef} className="zoom-dialog" aria-label="Увеличенная фотография букета" onCancel={() => setZoom(false)} onClick={(event) => { if (event.target === event.currentTarget) setZoom(false); }}><button className="zoom-close icon-button" aria-label="Закрыть фотографию" type="button" onClick={() => setZoom(false)}><Icon name="close" /></button><img src={sitePath(image)} alt={product.name + ', увеличенная фотография'} width="1100" height="1375" /></dialog>
   </div>;
 }

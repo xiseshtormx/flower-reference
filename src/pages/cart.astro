@@ -1,9 +1,10 @@
 ---
+import { sitePath } from '../lib/site-path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CartPage from '../components/CartPage';
-import { publicCatalog } from '../server/database';
+import { storefrontCatalog as publicCatalog } from '../server/storefront';
 const catalog = publicCatalog();
 ---
 <BaseLayout catalog={catalog} title="Корзина — Референс цветочного">
-  <div class="container cart-page"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Корзина</span></nav><div class="cart-page-heading"><p class="eyebrow">ОФОРМЛЕНИЕ</p><h1>Корзина</h1></div><CartPage initialCatalog={catalog} client:load /></div>
+  <div class="container cart-page"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href={sitePath('/')}>Главная</a><span aria-hidden="true">/</span><span aria-current="page">Корзина</span></nav><div class="cart-page-heading"><p class="eyebrow">ОФОРМЛЕНИЕ</p><h1>Корзина</h1></div><CartPage initialCatalog={catalog} client:load /></div>
 </BaseLayout>
